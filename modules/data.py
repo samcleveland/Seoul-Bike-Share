@@ -6,10 +6,22 @@ Created on Wed Dec  1 11:27:55 2021
 """
 
 import pandas as pd
+from sklearn import preprocessing
 
 class data():
+    def dummy(self, df, columns):
+        for col in columns:
+            dummy = pd.get_dummies(df[col])
+            df = pd.concat([df, dummy], axis = 1)
+            
+        return df
+    
     def getData(self, filename):
         df = pd.read_csv(filename, encoding = 'unicode_escape')
+        
+        #remove non functioning days
+        df = df[df['Functioning Day'] == 'Yes'] 
+        
         return df
     
     def renameCol(self, df):
@@ -24,3 +36,6 @@ class data():
 
         df.rename(columns=column_dict, inplace = True)
         return df
+    
+
+    
