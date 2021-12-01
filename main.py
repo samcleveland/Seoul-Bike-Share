@@ -3,6 +3,9 @@
 Created on Wed Dec  1 11:10:05 2021
 
 @author: samcl
+
+Data provided by UCI
+https://archive.ics.uci.edu/ml/machine-learning-databases/00560/
 """
 
 import numpy as np
@@ -21,6 +24,8 @@ df = data().renameCol(df)
 
 #create dummy variables
 df = data().dummy(df, dummy_var)
+
+plots().histogram(np.array(df['Rented Bike Count']), 40)
 
 
 
