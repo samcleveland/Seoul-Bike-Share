@@ -6,6 +6,7 @@ Created on Wed Dec  1 11:27:55 2021
 """
 
 import pandas as pd
+import numpy as np
 from sklearn import preprocessing
 
 class data():
@@ -36,6 +37,12 @@ class data():
 
         df.rename(columns=column_dict, inplace = True)
         return df
+    
+    def transform(self, x, transform_type):
+        if transform_type.lower() == 'log':
+            return np.log(x)
+        if transform_type.lower() == 'sqrt':
+            return np.sqrt(x)
     
 
     

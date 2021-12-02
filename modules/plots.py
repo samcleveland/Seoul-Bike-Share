@@ -14,9 +14,12 @@ import matplotlib.pyplot as plt
 
 class plots():
     
-    def histogram(self, x, num_bins):
+    def histogram(self, x, num_bins, title):
         mu = np.mean(x)
         sd = np.std(x)
+        
+        print(mu)
+        print(sd)
         
         fig, ax = plt.subplots()
         
@@ -28,11 +31,10 @@ class plots():
              np.exp(-0.5 * (1 / sd * (bins - mu))**2))
         ax.plot(bins, y, '--')
         
-        '''
-        ax.set_xlabel('Bikes Rented')
-        ax.set_ylabel('Probability density')
-        ax.set_title(r'Histogram of IQ: $\mu=100$, $\sd=15$')
-        '''
+        ax.set_xlabel(title[0])
+        ax.set_ylabel(title[1])
+        ax.set_title(title[1] + ' of ' + title[0])
+        
         
         # Tweak spacing to prevent clipping of ylabel
         fig.tight_layout()

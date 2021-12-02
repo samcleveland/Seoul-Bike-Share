@@ -25,9 +25,12 @@ df = data().renameCol(df)
 #create dummy variables
 df = data().dummy(df, dummy_var)
 
-plots().histogram(np.array(df['Rented Bike Count']), 40)
 
 
+#analyze dependent variable for normal distribution
+plots().histogram(np.array(df['Rented Bike Count']), 40, ['Bikes Rented', 'Frequency'])
 
+#SquareRoot transform to get better fit for dependent variable
+df['Sqrt Bikes Rented'] = data().transform(np.array(df['Rented Bike Count']), 'sqrt')
 
-
+plots().histogram(np.array(df['Sqrt Bikes Rented']), 40, ['Sqrt Bikes Rented', 'Frequency'])
