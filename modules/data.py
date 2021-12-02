@@ -8,8 +8,10 @@ Created on Wed Dec  1 11:27:55 2021
 import pandas as pd
 import numpy as np
 from sklearn import preprocessing
+from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 class data():
+    #create dummy variables
     def dummy(self, df, columns):
         for col in columns:
             dummy = pd.get_dummies(df[col])
@@ -17,6 +19,7 @@ class data():
             
         return df
     
+    #downloads data
     def getData(self, filename):
         df = pd.read_csv(filename, encoding = 'unicode_escape')
         
@@ -25,6 +28,7 @@ class data():
         
         return df
     
+    #removes trailing units in column name
     def renameCol(self, df):
         column_dict = {}
         
@@ -38,11 +42,23 @@ class data():
         df.rename(columns=column_dict, inplace = True)
         return df
     
+    #transform variable
     def transform(self, x, transform_type):
         if transform_type.lower() == 'log':
             return np.log(x)
         if transform_type.lower() == 'sqrt':
             return np.sqrt(x)
     
+    #calculate and remove VIF variables
+    def vif(self, df):
+        df_vif = pd.DataFrame()
+        df_vif['Column'] = df.columns
+        
+        print('here')
+        
+        while True:
+            df_vif['VIF'] = [variance_inflation_factor(df.values, i) for i in range(len(df.columns))]
+            print(df_vif)
+            break
 
     

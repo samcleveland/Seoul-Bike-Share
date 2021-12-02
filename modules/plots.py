@@ -11,8 +11,16 @@ Created on Wed Dec  1 15:45:44 2021
 
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 class plots():
+    def correlation(self, df):
+        #get the correlations of each feature in the dataset
+        corr_matrix = df.corr()
+        top_corr_features = corr_matrix.index
+        plt.figure(figsize=(20,20))
+        #plot heat map
+        sns.heatmap(df[top_corr_features].corr(),annot=True,cmap="RdYlGn")
     
     def histogram(self, x, num_bins, title):
         mu = np.mean(x)
