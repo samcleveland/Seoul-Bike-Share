@@ -17,10 +17,7 @@ class plots():
     def histogram(self, x, num_bins, title):
         mu = np.mean(x)
         sd = np.std(x)
-        
-        print(mu)
-        print(sd)
-        
+                
         fig, ax = plt.subplots()
         
         # the histogram of the data
@@ -40,7 +37,16 @@ class plots():
         fig.tight_layout()
         plt.show()
     
-    def scatterplot(self, x, y):
-        plt.plot(x, y, 'o', color='black')
+    def scatterplot(self, df, x, y):
+        fig, ax = plt.subplots()        
+        plt.plot(np.array(df[x]), np.array(df[y]), 'o', color='black')
+        
+        ax.set_xlabel(x)
+        ax.set_ylabel(y)
+        ax.set_title(y + ' by ' + x)
+        
+        # Tweak spacing to prevent clipping of ylabel
+        fig.tight_layout()
+        plt.show()
         
         

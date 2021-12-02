@@ -18,13 +18,11 @@ from modules.plots import *
 filename = '../Seoul-Bike-Share/SeoulBikeData.csv'
 dv = 'Rented Bike Count'
 dummy_var = ('Hour','Seasons','Holiday')
+iv_col = ('Temperature', 'Humidity', 'Wind speed', 'Visibility', 'Solar Radiation', 'Rainfall', 'Snowfall' )
+
 
 df = data().getData(filename)
 df = data().renameCol(df)
-
-#create dummy variables
-df = data().dummy(df, dummy_var)
-
 
 
 #analyze dependent variable for normal distribution
@@ -34,3 +32,13 @@ plots().histogram(np.array(df['Rented Bike Count']), 40, ['Bikes Rented', 'Frequ
 df['Sqrt Bikes Rented'] = data().transform(np.array(df['Rented Bike Count']), 'sqrt')
 
 plots().histogram(np.array(df['Sqrt Bikes Rented']), 40, ['Sqrt Bikes Rented', 'Frequency'])
+
+
+
+#print scatterplots
+for col in iv_col:
+    plots().scatterplot(df, col, 'Sqrt Bikes Rented')
+    
+
+#create dummy variables
+df = data().dummy(df, dummy_var)    
