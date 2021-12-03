@@ -49,16 +49,26 @@ class data():
         if transform_type.lower() == 'sqrt':
             return np.sqrt(x)
     
-    #calculate and remove VIF variables
-    def vif(self, df):
-        df_vif = pd.DataFrame()
-        df_vif['Column'] = df.columns
-        
-        print('here')
+    #calculate and remove variables based on VIF
+    def vif(self, df, dv):
+        df = df.drop(columns = dv)
         
         while True:
+            df_vif = pd.DataFrame()
+            df_vif['Column'] = df.columns
             df_vif['VIF'] = [variance_inflation_factor(df.values, i) for i in range(len(df.columns))]
-            print(df_vif)
-            break
+            
+            max_val = df_vif['VIF'].max()
+            
+            if max_val >= 10.0:
+                temp_df = df_vif[df_vif['VIF'] == max_val]
+                temp_col = temp_df['Column'].iloc[0]
+                print(temp_col + ' was removed')
+                df = df.drop(columns = [temp_col], axis = 1)
+                print(df.columns)
+            elif max_val < 10:
+                break
+        
+        #return df
 
     

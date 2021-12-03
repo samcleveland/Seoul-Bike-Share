@@ -11,18 +11,20 @@ https://archive.ics.uci.edu/ml/machine-learning-databases/00560/
 import numpy as np
 import pandas as pd
 from sklearn import linear_model, preprocessing
-import matplotlib.pyplot as plt
 from modules.data import *
 from modules.plots import *
 
 filename = '../Seoul-Bike-Share/SeoulBikeData.csv'
 dv = 'Rented Bike Count'
-dummy_var = ('Hour','Seasons','Holiday')
+dummy_var = ('Hour','Seasons','Is Holiday')
 iv_col = ['Temperature', 'Humidity', 'Wind speed', 'Visibility', 'Dew point temperature', 'Solar Radiation', 'Rainfall', 'Snowfall' ]
 drop_dummy = (23, 'No Holiday','Autumn') #select which dummy variables will be considered base
 
 
 df = data().getData(filename)
+
+df.rename(columns={'Holiday':'Is Holiday'}, inplace = True)
+
 df = data().renameCol(df)
 
 
@@ -47,6 +49,8 @@ for col in iv_col:
 #create dummy variables
 df = data().dummy(df, dummy_var)
 
+#remove 
+
 #drop base dummy variable
 for col in drop_dummy:
     df = df.drop(col, axis = 1)
@@ -56,4 +60,9 @@ corr_df = pd.concat([df[dv], df[iv_col]], axis = 1)
 
 plots().correlation(corr_df)
 
-data().vif(corr_df)
+df_1 = df.loc[:, ~df.columns.isin(['Date', 'Hour', 'Rented Bike Count', 'Seasons', 'Is Holiday', 'Functioning Day'])]
+
+#need to clean up the data first
+#removes variables with multicollinearity
+df_1 = data().vif(df_1, dv)
+
