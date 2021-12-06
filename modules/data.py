@@ -11,6 +11,22 @@ from sklearn import preprocessing
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 class data():
+    def descriptives(self, df, columns):
+        descriptive_df = pd.DataFrame(columns = ['Feature', 'Minimum', 'Maximum', 'Range'])
+        print(descriptive_df.shape)
+        i = 0
+        for col in columns:
+            
+            minimum, maximum = df[col].min(), df[col].max()
+            Range = maximum - minimum
+            
+            descriptive_df.loc[i] = [col, minimum, maximum, Range]
+            
+            i += 1
+            
+        print(descriptive_df)
+    
+    
     #create dummy variables
     def dummy(self, df, columns):
         for col in columns:
@@ -69,6 +85,8 @@ class data():
             elif max_val < 10:
                 break
         
-        #return df
+        return df
+    
+
 
     

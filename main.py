@@ -11,6 +11,9 @@ https://archive.ics.uci.edu/ml/machine-learning-databases/00560/
 import numpy as np
 import pandas as pd
 from sklearn import linear_model, preprocessing
+import os
+
+os.chdir('C:/Users/samcl/Documents/GitHub/Seoul-Bike-Share')
 from modules.data import *
 from modules.plots import *
 
@@ -26,6 +29,7 @@ df = data().getData(filename)
 df.rename(columns={'Holiday':'Is Holiday'}, inplace = True)
 
 df = data().renameCol(df)
+descriptive_df = data().descriptives(df, iv_col)
 
 
 #analyze dependent variable for normal distribution
@@ -65,4 +69,3 @@ df_1 = df.loc[:, ~df.columns.isin(['Date', 'Hour', 'Rented Bike Count', 'Seasons
 #need to clean up the data first
 #removes variables with multicollinearity
 df_1 = data().vif(df_1, dv)
-
