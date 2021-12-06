@@ -12,15 +12,18 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 class data():
     def descriptives(self, df, columns):
-        descriptive_df = pd.DataFrame(columns = ['Feature', 'Minimum', 'Maximum', 'Range'])
+        descriptive_df = pd.DataFrame(columns = ['Feature', 'Mean', 'Minimum', 'Maximum', 'Range', 'SD', 'Quant1','Quant3'])
         print(descriptive_df.shape)
         i = 0
         for col in columns:
             
+            mean = df[col].mean()
             minimum, maximum = df[col].min(), df[col].max()
             Range = maximum - minimum
+            sd = df[col].std()
+            q1, q3 = df[col].quantile(q=.25, interpolation='midpoint'), df[col].quantile(q=.75, interpolation='midpoint')
             
-            descriptive_df.loc[i] = [col, minimum, maximum, Range]
+            descriptive_df.loc[i] = [col, mean, minimum, maximum, Range, sd, q1, q3]
             
             i += 1
             
