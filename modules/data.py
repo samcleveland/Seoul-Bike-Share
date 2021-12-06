@@ -71,6 +71,7 @@ class data():
     #calculate and remove variables based on VIF
     def vif(self, df, dv):
         df = df.drop(columns = dv)
+        drop_col = []
         
         while True:
             df_vif = pd.DataFrame()
@@ -84,11 +85,11 @@ class data():
                 temp_col = temp_df['Column'].iloc[0]
                 print(temp_col + ' was removed')
                 df = df.drop(columns = [temp_col], axis = 1)
-                print(df.columns)
+                drop_col.append(temp_col)
             elif max_val < 10:
                 break
         
-        return df
+        return drop_col
     
 
 

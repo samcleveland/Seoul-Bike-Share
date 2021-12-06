@@ -29,6 +29,9 @@ df = data().getData(filename)
 df.rename(columns={'Holiday':'Is Holiday'}, inplace = True)
 
 df = data().renameCol(df)
+
+
+#Create DF with descriptive statistics of IV
 descriptive_df = data().descriptives(df, iv_col)
 
 
@@ -53,7 +56,7 @@ for col in iv_col:
 #create dummy variables
 df = data().dummy(df, dummy_var)
 
-#remove 
+
 
 #drop base dummy variable
 for col in drop_dummy:
@@ -68,4 +71,4 @@ df_1 = df.loc[:, ~df.columns.isin(['Date', 'Hour', 'Rented Bike Count', 'Seasons
 
 #need to clean up the data first
 #removes variables with multicollinearity
-df_1 = data().vif(df_1, dv)
+df_1 = df_1.loc[:, ~df_1.columns.isin([data().vif(df_1, dv)])]
