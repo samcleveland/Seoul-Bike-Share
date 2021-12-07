@@ -70,14 +70,20 @@ plots().correlation(corr_df)
 
 df_1 = df.loc[:, ~df.columns.isin(['Date', 'Hour', 'Rented Bike Count', 'Seasons', 'Is Holiday', 'Functioning Day'])]
 
-#need to clean up the data first
 #removes variables with multicollinearity
 df_1 = df_1.loc[:, ~df_1.columns.isin([data().vif(df_1, dv)])]
+
+
 
 
 #create separate dfs for dv and iv
 df_1_x = df_1.loc[:, ~df_1.columns.isin([dv])]
 df_1_y = df_1[dv]
+
+#train full model
+reg = linear_model.LinearRegression()
+# Train the classifier
+reg.fit(df_1_x, df_1_y)
 
 
 # Split data into training and testing datasets
