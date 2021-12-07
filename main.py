@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 from sklearn import linear_model, preprocessing
 import os
+from sklearn.model_selection import train_test_split
 
 os.chdir('C:/Users/samcl/Documents/GitHub/Seoul-Bike-Share')
 from modules.data import *
@@ -72,3 +73,15 @@ df_1 = df.loc[:, ~df.columns.isin(['Date', 'Hour', 'Rented Bike Count', 'Seasons
 #need to clean up the data first
 #removes variables with multicollinearity
 df_1 = df_1.loc[:, ~df_1.columns.isin([data().vif(df_1, dv)])]
+
+
+#create separate dfs for dv and iv
+df_1_x = df_1.loc[:, ~df_1.columns.isin([dv])]
+df_1_y = df_1[dv]
+
+
+# Split data into training and testing datasets
+df_1_x_train, df_1_x_test, df_1_y_train, df_1_y_test = train_test_split (X, y, test_size=0.25, random_state=153926)
+
+#split data into training and testing
+
