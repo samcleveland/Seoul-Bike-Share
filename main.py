@@ -13,6 +13,8 @@ import pandas as pd
 from sklearn import linear_model, preprocessing
 import os
 from sklearn.model_selection import train_test_split
+from statsmodels.formula.api import ols
+
 
 os.chdir('C:/Users/samcl/Documents/GitHub/Seoul-Bike-Share')
 from modules.data import *
@@ -81,10 +83,22 @@ df_1_x = df_1.loc[:, ~df_1.columns.isin([dv])]
 df_1_y = df_1[dv]
 
 #train full model
-reg = linear_model.LinearRegression()
-# Train the classifier
-reg.fit(df_1_x, df_1_y)
+reg = sm.OLS(df_1_y,df_1_x).fit()
 
+ol_model = ols('rating ~ points', data=df_1).fit()
+# Train the classifier
+#reg.fit(df_1_x, df_1_y)
+
+#full model prediction
+full_model = pd.DataFrame()
+df_1['full_y_pred'] = reg.predict(df_1_x)
+
+
+stud_resid = data().student_residual(ol_model)
+df_1['Resdiual'] = stud_resid[0]
+
+cooks_d = data().influence(reg)
+df_1['cooks_d'] = cooks_d[0]
 
 # Split data into training and testing datasets
 df_1_x_train, df_1_x_test, df_1_y_train, df_1_y_test = train_test_split (X, y, test_size=0.25, random_state=153926)

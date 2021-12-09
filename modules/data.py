@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 from sklearn import preprocessing
 from statsmodels.stats.outliers_influence import variance_inflation_factor
+from statsmodels.stats.outliers_influence import OLSInfluence
 
 class data():
     def descriptives(self, df, columns):
@@ -47,6 +48,13 @@ class data():
         
         return df
     
+    def influence(self, model):
+        influence = model.get_influence()
+        cooks_d = influence.cooks_distance
+        
+        return cooks_d
+        
+    
     #removes trailing units in column name
     def renameCol(self, df):
         column_dict = {}
@@ -60,6 +68,10 @@ class data():
 
         df.rename(columns=column_dict, inplace = True)
         return df
+    
+    def student_residual(self, model):
+        stud = model.outlier_test()
+        print(stud)
     
     #transform variable
     def transform(self, x, transform_type):
