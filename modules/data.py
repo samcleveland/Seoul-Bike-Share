@@ -100,7 +100,7 @@ class data():
                 drop_col.append(temp_col)
             elif max_val < 10:
                 break
-        
+            
         return drop_col
     
 

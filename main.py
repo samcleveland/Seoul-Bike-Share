@@ -84,7 +84,7 @@ reg = sm.OLS(df_1_Y,df_1_X).fit()
 inf = reg.get_influence()
 inf.plot_influence()
 
-
+test = data().influence(reg)
 
 
 
