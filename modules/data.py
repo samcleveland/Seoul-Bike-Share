@@ -10,6 +10,7 @@ import numpy as np
 from sklearn import preprocessing
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 from statsmodels.stats.outliers_influence import OLSInfluence
+import statsmodels.api as sm
 
 class data():
     def descriptives(self, df, columns):
@@ -53,7 +54,29 @@ class data():
         cooks_d = influence.cooks_distance
         
         return cooks_d
-        
+    
+    
+    def removePoints(self, df, model, dv, threshold = .01):
+        curR2adj = model.rsquared_adj
+        newR2adj = 0
+        while newR2adj - curR2adj > .01:
+            df['Cooks Distance'] = model.influence(model)[0]
+            df['Studentized Residual'] = model.outlier_test()['student_resid']
+            n = len(df)
+            df_new = df.loc[df['Cooks Distance'] <= 4 /n ]
+            df_new = df_new.loc[df['Studentized Residual'] >= -3]
+            df_new = df_new.loc[df['Studentized Residual'] <= 3]
+            
+            #create separate dfs for dv and iv
+            df_X = df_new.loc[:, ~df_new.columns.isin([dv])] #features df
+            df_Y = df_new[dv] #dv df
+                        
+            model = sm.OLS(df_Y,df_X).fit()
+            
+            newR2adj, curR2adj = model.rsquared_adj, newR2adj
+            df1 = df
+            
+        return df
     
     #removes trailing units in column name
     def renameCol(self, df):

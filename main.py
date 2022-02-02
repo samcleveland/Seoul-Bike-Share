@@ -70,8 +70,7 @@ plots().correlation(corr_df)
 df_1 = df.loc[:, ~df.columns.isin(['Date', 'Hour', 'Rented Bike Count', 'Seasons', 'Is Holiday', 'Functioning Day'])]
 
 #removes variables with VIF>10
-df_1 = df_1.loc[:, ~df_1.columns.isin([data().vif(df_1, dv)])]
-
+df_1 = df_1.loc[:, ~df_1.columns.isin(data().vif(df_1, dv))]
 
 #create separate dfs for dv and iv
 df_1_X = df_1.loc[:, ~df_1.columns.isin([dv])] #features df
@@ -84,13 +83,13 @@ reg = sm.OLS(df_1_Y,df_1_X).fit()
 inf = reg.get_influence()
 inf.plot_influence()
 
-test = data().influence(reg)
 
+print(reg.rsquared_adj)
+df_1 = data().removePoints(df_1, reg, dv, .00001)
 
-
-
-
-
+#create separate dfs for dv and iv
+df_1_X = df_1.loc[:, ~df_1.columns.isin([dv])] #features df
+df_1_Y = df_1[dv] #dv df
 
 
 print(reg.rsquared_adj)
