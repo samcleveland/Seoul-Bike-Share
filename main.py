@@ -94,26 +94,22 @@ df_test["cooks d"] = data().influence(reg)
 df_1_X = df_1.loc[:, ~df_1.columns.isin([dv])] #features df
 df_1_Y = df_1[dv] #dv df
 
-
+#train full model excluding outliers
+reg = sm.OLS(df_1_Y,df_1_X).fit()
 print(reg.rsquared_adj)
 
-
-# Train the classifier
-#reg.fit(df_1_x, df_1_y)
-
-#full model prediction
-full_model = pd.DataFrame()
-df_1['full_y_pred'] = reg.predict(df_1_x)
-
-
-stud_resid = data().student_residual(ol_model)
-df_1['Resdiual'] = stud_resid[0]
-
-cooks_d = data().influence(reg)
-df_1['cooks_d'] = cooks_d[0]
-
 # Split data into training and testing datasets
-df_1_x_train, df_1_x_test, df_1_y_train, df_1_y_test = train_test_split (X, y, test_size=0.25, random_state=153926)
+df_1_x_train, df_1_x_test, df_1_y_train, df_1_y_test = train_test_split (df_1_X, df_1_Y, test_size=0.25, random_state=153926)
+
+#create training model
+train_model = sm.OLS(df_1_y_train, df_1_x_train).fit()
+print(train_model.summary())
+
+
+#df_predict = pd.DataFrame()
+
+
+#df_predict['Model'] = train_model.predict(df_1_x_test)
 
 
 

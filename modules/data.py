@@ -64,8 +64,10 @@ class data():
             df['Studentized Residual'] = model.outlier_test()['student_resid']
             n = len(df)
             df_new = df.loc[df['Cooks Distance'] <= 4 /n ]
-            df_new = df_new.loc[df['Studentized Residual'] >= -3]
-            df_new = df_new.loc[df['Studentized Residual'] <= 3]
+            df_new = df_new.loc[df['Studentized Residual'] >= -4]
+            df_new = df_new.loc[df['Studentized Residual'] <= 4]
+            
+            df_new = df_new.loc[:, ~df_new.columns.isin(['Cooks Distance', 'Studentized Residual'])]
                     
             #create separate dfs for dv and iv
             df_X = df_new.loc[:, ~df_new.columns.isin([dv])] #features df
@@ -115,13 +117,13 @@ class data():
             
             max_val = df_vif['VIF'].max()
             
-            if max_val >= 10.0:
+            if max_val >= 5.0:
                 temp_df = df_vif[df_vif['VIF'] == max_val]
                 temp_col = temp_df['Column'].iloc[0]
                 print(temp_col + ' was removed')
                 df = df.drop(columns = [temp_col], axis = 1)
                 drop_col.append(temp_col)
-            elif max_val < 10:
+            elif max_val < 5:
                 break
             
         return drop_col
