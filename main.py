@@ -85,7 +85,10 @@ inf.plot_influence()
 
 
 print(reg.rsquared_adj)
-df_1 = data().removePoints(df_1, reg, dv, .00001)
+df_1 = data().removePoints(df_1, reg, dv, .01)
+
+df_test = pd.DataFrame()
+df_test["cooks d"] = data().influence(reg)
 
 #create separate dfs for dv and iv
 df_1_X = df_1.loc[:, ~df_1.columns.isin([dv])] #features df
@@ -93,6 +96,7 @@ df_1_Y = df_1[dv] #dv df
 
 
 print(reg.rsquared_adj)
+
 
 # Train the classifier
 #reg.fit(df_1_x, df_1_y)

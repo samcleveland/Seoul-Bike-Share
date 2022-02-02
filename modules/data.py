@@ -58,15 +58,15 @@ class data():
     
     def removePoints(self, df, model, dv, threshold = .01):
         curR2adj = model.rsquared_adj
-        newR2adj = 0
-        while newR2adj - curR2adj > .01:
-            df['Cooks Distance'] = model.influence(model)[0]
+        newR2adj = 1
+        while newR2adj - curR2adj > threshold:
+            df['Cooks Distance'] = data().influence(model)[0]
             df['Studentized Residual'] = model.outlier_test()['student_resid']
             n = len(df)
             df_new = df.loc[df['Cooks Distance'] <= 4 /n ]
             df_new = df_new.loc[df['Studentized Residual'] >= -3]
             df_new = df_new.loc[df['Studentized Residual'] <= 3]
-            
+                    
             #create separate dfs for dv and iv
             df_X = df_new.loc[:, ~df_new.columns.isin([dv])] #features df
             df_Y = df_new[dv] #dv df
@@ -74,7 +74,7 @@ class data():
             model = sm.OLS(df_Y,df_X).fit()
             
             newR2adj, curR2adj = model.rsquared_adj, newR2adj
-            df1 = df
+            df = df_new
             
         return df
     
