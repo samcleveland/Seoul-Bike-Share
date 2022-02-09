@@ -42,10 +42,8 @@ class data():
         df = pd.read_csv(filename, encoding = 'unicode_escape')
         
         #remove non functioning days
-        df = df[df['Functioning Day'] == 'Yes'] 
-        
-        self.setDF(df)
-    
+        self.df = df[df['Functioning Day'] == 'Yes'] 
+            
     def influence(self, model):
         influence = model.get_influence()
         cooks_d = influence.cooks_distance

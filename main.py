@@ -40,17 +40,19 @@ main_df.renameCol() #remove special characters from headings
 #Create DF with descriptive statistics of IV
 main_df.descriptives(iv_col)  #try to create a more exhibity looking thing
 
-
-
-
-
-
-
-
-
+getPlot = plots()
 
 #analyze dependent variable for normal distribution
-plots().histogram(np.array(df[dv]), 40, ['Bikes Rented', 'Frequency'])
+getPlot.histogram(np.array(main_df.df[dv]), 40, ['Bikes Rented', 'Frequency'])
+
+
+
+
+
+
+
+
+
 
 #SquareRoot transform to get better fit for dependent variable
 df['Sqrt Bikes Rented'] = data().transform(np.array(df[dv]), 'sqrt')
