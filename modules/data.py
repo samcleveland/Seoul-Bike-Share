@@ -104,11 +104,11 @@ class data():
         print(stud)
     
     #transform variable
-    def transform(self, x, transform_type):
+    def transform(self, x, transform_type, colName):
         if transform_type.lower() == 'log':
-            return np.log(x)
+            self.df[colName] = np.log(x)
         if transform_type.lower() == 'sqrt':
-            return np.sqrt(x)
+            self.df[colName] = np.sqrt(x)
     
     #calculate and remove variables based on VIF
     def vif(self, df, dv):

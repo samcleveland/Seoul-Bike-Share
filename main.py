@@ -45,28 +45,24 @@ getPlot = plots()
 #analyze dependent variable for normal distribution
 getPlot.histogram(np.array(main_df.df[dv]), 40, ['Bikes Rented', 'Frequency'])
 
-
-
-
-
-
-
-
-
-
 #SquareRoot transform to get better fit for dependent variable
-df['Sqrt Bikes Rented'] = data().transform(np.array(df[dv]), 'sqrt')
+main_df.transform(np.array(main_df.df[dv]), 'sqrt','Sqrt Bikes Rented')
 
 dv = 'Sqrt Bikes Rented' #set new dv name
 
-plots().histogram(np.array(df[dv]), 40, [dv, 'Frequency']) #replot histogram with transformed dv
+getPlot.histogram(np.array(main_df.df[dv]), 40, [dv, 'Frequency']) #replot histogram with transformed dv
 
 #print scatterplots to check linearity
 for col in iv_col:
-    plots().scatterplot(df, col, dv)
+    getPlot.scatterplot(main_df.df, col, dv)
     
 #create dummy variables
-df = data().dummy(df, dummy_var)
+main_df.dummy(dummy_var)
+
+check_df = main_df.df
+
+
+
 
 #drop base dummy variable
 for col in drop_dummy:
