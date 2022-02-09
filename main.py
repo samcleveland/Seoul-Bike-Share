@@ -30,15 +30,23 @@ iv_col = ['Temperature', 'Humidity', 'Wind speed', 'Visibility', 'Dew point temp
 drop_dummy = (23, 'No Holiday','Autumn') #select which dummy variables will be considered base
 
 
-df = data().getData(filename) #import data
+main_df = data() #create instance of Data will full dataset
+main_df.getData(filename) #import data
 
-df.rename(columns={'Holiday':'Is Holiday'}, inplace = True) #rename holiday column for clarity
+main_df.rename({'Holiday':'Is Holiday'}) #rename holiday column for clarity
 
-df = data().renameCol(df) #remove certain characters from headings
-
+main_df.renameCol() #remove special characters from headings
 
 #Create DF with descriptive statistics of IV
-descriptive_df = data().descriptives(df, iv_col)
+main_df.descriptives(iv_col)  #try to create a more exhibity looking thing
+
+
+
+
+
+
+
+
 
 
 #analyze dependent variable for normal distribution

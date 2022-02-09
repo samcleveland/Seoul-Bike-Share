@@ -13,32 +13,29 @@ from statsmodels.stats.outliers_influence import OLSInfluence
 import statsmodels.api as sm
 
 class data():
-    def descriptives(self, df, columns):
+    def descriptives(self, columns):
         descriptive_df = pd.DataFrame(columns = ['Feature', 'Mean', 'Minimum', 'Maximum', 'Range', 'SD', 'Quant1','Quant3'])
         print(descriptive_df.shape)
         i = 0
         for col in columns:
             
-            mean = df[col].mean()
-            minimum, maximum = df[col].min(), df[col].max()
+            mean = self.df[col].mean()
+            minimum, maximum = self.df[col].min(), self.df[col].max()
             Range = maximum - minimum
-            sd = df[col].std()
-            q1, q3 = df[col].quantile(q=.25, interpolation='midpoint'), df[col].quantile(q=.75, interpolation='midpoint')
+            sd = self.df[col].std()
+            q1, q3 = self.df[col].quantile(q=.25, interpolation='midpoint'), self.df[col].quantile(q=.75, interpolation='midpoint')
             
             descriptive_df.loc[i] = [col, mean, minimum, maximum, Range, sd, q1, q3]
             
             i += 1
             
-        print(descriptive_df)
-    
+        print(descriptive_df) 
     
     #create dummy variables
-    def dummy(self, df, columns):
+    def dummy(self, columns):
         for col in columns:
-            dummy = pd.get_dummies(df[col])
-            df = pd.concat([df, dummy], axis = 1)
-            
-        return df
+            dummy = pd.get_dummies(self.df[col])
+            self.df = pd.concat([self.df, dummy], axis = 1)
     
     #downloads data
     def getData(self, filename):
@@ -47,7 +44,7 @@ class data():
         #remove non functioning days
         df = df[df['Functioning Day'] == 'Yes'] 
         
-        return df
+        self.setDF(df)
     
     def influence(self, model):
         influence = model.get_influence()
@@ -80,19 +77,29 @@ class data():
             
         return df
     
+    def rename(self, colDict):
+        for key in colDict.keys():
+            self.df.rename(columns={key:colDict[key]}, inplace = True)
+    
     #removes trailing units in column name
-    def renameCol(self, df):
+    def renameCol(self):
         column_dict = {}
         
-        for col in df:
+        for col in self.df:
             if '(' in col:
                 new_name = col[:col.find('(')]
                 column_dict[col] = new_name.strip()    
             else:
                 column_dict[col] = col.strip()
 
-        df.rename(columns=column_dict, inplace = True)
-        return df
+        self.df.rename(columns=column_dict, inplace = True)
+    
+    def returnDF(self):
+        return self.df
+    
+    def setDF(self, df):
+        self.df = df
+    
     
     def student_residual(self, model):
         stud = model.outlier_test()
