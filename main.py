@@ -71,7 +71,7 @@ for col in drop_dummy:
 #create dataframe for correlation matrix
 corr_df = pd.concat([df[dv], df[iv_col]], axis = 1)
 
-plots().correlation(corr_df)
+getPlot.correlation(corr_df)
 
 df_1 = df.loc[:, ~df.columns.isin(['Date', 'Hour', 'Rented Bike Count', 'Seasons', 'Is Holiday', 'Functioning Day'])]
 
