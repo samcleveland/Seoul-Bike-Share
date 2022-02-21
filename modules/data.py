@@ -12,7 +12,7 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor
 from statsmodels.stats.outliers_influence import OLSInfluence
 import statsmodels.api as sm
 
-class data():
+class data(pd):
     def descriptives(self, columns):
         descriptive_df = pd.DataFrame(columns = ['Feature', 'Mean', 'Minimum', 'Maximum', 'Range', 'SD', 'Quant1','Quant3'])
         print(descriptive_df.shape)

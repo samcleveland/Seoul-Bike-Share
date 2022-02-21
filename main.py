@@ -61,12 +61,17 @@ main_df.dummy(dummy_var)
 
 check_df = main_df.df
 
-
-
-
 #drop base dummy variable
 for col in drop_dummy:
-    df = df.drop(col, axis = 1)
+    main_df.df = main_df.df.drop(col, axis = 1)
+    
+
+
+
+
+
+
+
 
 #create dataframe for correlation matrix
 corr_df = pd.concat([df[dv], df[iv_col]], axis = 1)
