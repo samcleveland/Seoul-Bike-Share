@@ -46,6 +46,9 @@ class data():
         
         #remove non functioning days
         self.df = df[df['Functioning Day'] == 'Yes'] 
+        
+    def getR2(self, model):
+        model.rsquared_adj
             
     def influence(self, model):
         influence = model.get_influence()

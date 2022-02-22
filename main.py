@@ -86,17 +86,15 @@ main_df.split()
 #train full model
 main_df.fit()
 
-
-
-
-
-
 #remove influential points & outliers
-inf = reg.get_influence()
+inf = main_df.reg.get_influence()
 inf.plot_influence()
 
 
-print(reg.rsquared_adj)
+
+
+
+
 df_1 = data().removePoints(df_1, reg, dv, .01)
 
 df_test = pd.DataFrame()
