@@ -83,12 +83,13 @@ main_df.df.columns
 #create separate dfs for dv and iv
 main_df.split()
 
-main_df.df_Y
-
-
-
 #train full model
-reg = sm.OLS(df_1_Y,df_1_X).fit()
+main_df.fit()
+
+
+
+
+
 
 #remove influential points & outliers
 inf = reg.get_influence()

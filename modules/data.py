@@ -53,6 +53,9 @@ class data():
         
         return cooks_d
     
+    def fit(self):
+        self.reg = sm.OLS(self.df_Y,self.df_X).fit()
+    
     
     def removePoints(self, df, model, dv, threshold = .01):
         curR2adj = model.rsquared_adj
