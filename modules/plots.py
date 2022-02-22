@@ -14,13 +14,16 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 class plots():
-    def correlation(self, df):
+    def correlation(self):
         #get the correlations of each feature in the dataset
-        corr_matrix = df.corr()
+        corr_matrix = self.df.corr()
         top_corr_features = corr_matrix.index
         plt.figure(figsize=(20,20))
         #plot heat map
-        sns.heatmap(df[top_corr_features].corr(),annot=True,cmap="RdYlGn")
+        sns.heatmap(self.df[top_corr_features].corr(),annot=True,cmap="RdYlGn")
+        
+    def setDF(self, df):
+        self.df = df
     
     def histogram(self, x, num_bins, title):
         mu = np.mean(x)

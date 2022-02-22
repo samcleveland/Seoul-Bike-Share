@@ -12,8 +12,9 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor
 from statsmodels.stats.outliers_influence import OLSInfluence
 import statsmodels.api as sm
 
-class data(pd):
+class data():  
     def descriptives(self, columns):
+        'produces descriptive statstics'
         descriptive_df = pd.DataFrame(columns = ['Feature', 'Mean', 'Minimum', 'Maximum', 'Range', 'SD', 'Quant1','Quant3'])
         print(descriptive_df.shape)
         i = 0
@@ -30,15 +31,17 @@ class data(pd):
             i += 1
             
         print(descriptive_df) 
-    
+       
     #create dummy variables
     def dummy(self, columns):
+        'turns columns into dummy variables'
         for col in columns:
             dummy = pd.get_dummies(self.df[col])
             self.df = pd.concat([self.df, dummy], axis = 1)
     
     #downloads data
     def getData(self, filename):
+        'reads file and creates df'
         df = pd.read_csv(filename, encoding = 'unicode_escape')
         
         #remove non functioning days
@@ -95,9 +98,21 @@ class data(pd):
     def returnDF(self):
         return self.df
     
+    def removeCol(self, cols):
+        self.df = self.df.loc[:, ~self.df.columns.isin(cols)]
+        
+        return self.df
+            
+    
     def setDF(self, df):
         self.df = df
     
+    def setDV(self, dv):
+        self.dv = dv
+        
+    def split(self):
+        self.df_X = self.df.loc[:, ~self.df.columns.isin([self.dv])]
+        self.df_Y = self.df[self.dv]
     
     def student_residual(self, model):
         stud = model.outlier_test()
@@ -111,8 +126,8 @@ class data(pd):
             self.df[colName] = np.sqrt(x)
     
     #calculate and remove variables based on VIF
-    def vif(self, df, dv):
-        df = df.drop(columns = dv)
+    def vif(self, threshold):
+        df = self.df.drop(columns = self.dv)
         drop_col = []
         
         while True:
@@ -122,16 +137,16 @@ class data(pd):
             
             max_val = df_vif['VIF'].max()
             
-            if max_val >= 5.0:
+            if max_val >= threshold:
                 temp_df = df_vif[df_vif['VIF'] == max_val]
                 temp_col = temp_df['Column'].iloc[0]
                 print(temp_col + ' was removed')
                 df = df.drop(columns = [temp_col], axis = 1)
                 drop_col.append(temp_col)
-            elif max_val < 5:
+            else:
                 break
-            
-        return drop_col
+        
+        self.removeCol(drop_col)
     
 
 

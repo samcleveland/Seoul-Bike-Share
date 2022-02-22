@@ -49,6 +49,7 @@ getPlot.histogram(np.array(main_df.df[dv]), 40, ['Bikes Rented', 'Frequency'])
 main_df.transform(np.array(main_df.df[dv]), 'sqrt','Sqrt Bikes Rented')
 
 dv = 'Sqrt Bikes Rented' #set new dv name
+main_df.setDV(dv)
 
 getPlot.histogram(np.array(main_df.df[dv]), 40, [dv, 'Frequency']) #replot histogram with transformed dv
 
@@ -64,28 +65,27 @@ check_df = main_df.df
 #drop base dummy variable
 for col in drop_dummy:
     main_df.df = main_df.df.drop(col, axis = 1)
-    
 
+#set dataframe in getPlot
+getPlot.setDF(pd.concat([main_df.df[dv], main_df.df[iv_col]], axis = 1))
 
+#print correlation of independent variables 
+getPlot.correlation()
 
-
-
-
-
-
-#create dataframe for correlation matrix
-corr_df = pd.concat([df[dv], df[iv_col]], axis = 1)
-
-getPlot.correlation(corr_df)
-
-df_1 = df.loc[:, ~df.columns.isin(['Date', 'Hour', 'Rented Bike Count', 'Seasons', 'Is Holiday', 'Functioning Day'])]
+#remove unnecessary columns
+main_df.removeCol(['Date', 'Hour', 'Rented Bike Count', 'Seasons', 'Is Holiday', 'Functioning Day'])
 
 #removes variables with VIF>10
-df_1 = df_1.loc[:, ~df_1.columns.isin(data().vif(df_1, dv))]
+main_df.vif(10)
+
+main_df.df.columns
 
 #create separate dfs for dv and iv
-df_1_X = df_1.loc[:, ~df_1.columns.isin([dv])] #features df
-df_1_Y = df_1[dv] #dv df
+main_df.split()
+
+main_df.df_Y
+
+
 
 #train full model
 reg = sm.OLS(df_1_Y,df_1_X).fit()
