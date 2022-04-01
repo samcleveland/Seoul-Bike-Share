@@ -12,22 +12,24 @@ import numpy as np
 import pandas as pd
 from sklearn import linear_model, preprocessing
 import os
-from sklearn.model_selection import train_test_split
-#from statsmodels.formula.api import ols
-import statsmodels.api as sm
-#from statsmodels.stats.outliers_influence import variance_inflation_factor as vif
 
+
+import statsmodels.api as sm
 
 
 os.chdir('C:/Users/samcl/Documents/GitHub/Seoul-Bike-Share')
-from modules.data import *
-from modules.plots import *
+from modules.data import data
+from modules.plots import plots
+
+
 
 filename = '../Seoul-Bike-Share/SeoulBikeData.csv' #filename of dataset
 dv = 'Rented Bike Count' #dependent variable
 dummy_var = ('Hour','Seasons','Is Holiday') #list of dummy variables
 iv_col = ['Temperature', 'Humidity', 'Wind speed', 'Visibility', 'Dew point temperature', 'Solar Radiation', 'Rainfall', 'Snowfall' ] #independent variables/non-dummy variables
 drop_dummy = (23, 'No Holiday','Autumn') #select which dummy variables will be considered base
+
+
 
 
 main_df = data() #create instance of Data will full dataset
@@ -60,8 +62,6 @@ for col in iv_col:
 #create dummy variables
 main_df.dummy(dummy_var)
 
-check_df = main_df.df
-
 #drop base dummy variable
 for col in drop_dummy:
     main_df.df = main_df.df.drop(col, axis = 1)
@@ -84,42 +84,37 @@ main_df.df.columns
 main_df.split()
 
 #train full model
-main_df.fit()
+#uses backwards selection to remove insignficant variables
+main_df.fit(main_df.df_X, main_df.df_Y)
+
+
+
+#plot influence
+inf = main_df.reg.get_influence()
+inf.plot_influence()
+ 
+
+
 
 #remove influential points & outliers
+main_df.removePoints()
+main_df.getR2()
+
+
+
+
+
+#print new influence points 
 inf = main_df.reg.get_influence()
 inf.plot_influence()
 
-
-
-
-
-
-df_1 = data().removePoints(df_1, reg, dv, .01)
-
-df_test = pd.DataFrame()
-df_test["cooks d"] = data().influence(reg)
-
-#create separate dfs for dv and iv
-df_1_X = df_1.loc[:, ~df_1.columns.isin([dv])] #features df
-df_1_Y = df_1[dv] #dv df
-
-#train full model excluding outliers
-reg = sm.OLS(df_1_Y,df_1_X).fit()
-print(reg.rsquared_adj)
-
 # Split data into training and testing datasets
-df_1_x_train, df_1_x_test, df_1_y_train, df_1_y_test = train_test_split (df_1_X, df_1_Y, test_size=0.25, random_state=153926)
+main_df.train_test(153926)
 
-#create training model
-train_model = sm.OLS(df_1_y_train, df_1_x_train).fit()
-print(train_model.summary())
+main_df.predict()
 
 
-#df_predict = pd.DataFrame()
-
-
-#df_predict['Model'] = train_model.predict(df_1_x_test)
-
-
+#plot modeled against actual 
+final_plot = plots()
+final_plot.scatterplot(main_df.df_predict, 'Model', 'Actual')
 

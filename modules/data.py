@@ -7,9 +7,8 @@ Created on Wed Dec  1 11:27:55 2021
 
 import pandas as pd
 import numpy as np
-from sklearn import preprocessing
+from sklearn.model_selection import train_test_split
 from statsmodels.stats.outliers_influence import variance_inflation_factor
-from statsmodels.stats.outliers_influence import OLSInfluence
 import statsmodels.api as sm
 
 class data():  
@@ -47,49 +46,76 @@ class data():
         #remove non functioning days
         self.df = df[df['Functioning Day'] == 'Yes'] 
         
-    def getR2(self, model):
-        model.rsquared_adj
+    def getR2(self):
+        'returns r squared value'
+        return self.reg.rsquared_adj
             
     def influence(self, model):
+        'returns cooks distance'
         influence = model.get_influence()
         cooks_d = influence.cooks_distance
         
         return cooks_d
     
-    def fit(self):
-        self.reg = sm.OLS(self.df_Y,self.df_X).fit()
+    def fit(self, x, y):
+        'fit model'
+        new_x = sm.add_constant(x, prepend=True)
+        self.reg = sm.OLS(y,new_x).fit()
+        
+        print(self.reg.summary())
+        
+        pvalues = self.reg.pvalues
+
+        if max(self.reg.pvalues) > .05:
+            self.removeCol([pvalues.idxmax()])
+            self.split()
+            self.fit(self.df_X, self.df_Y)
+        
+        return self.reg
+    
+    def predict(self):
+        'predicts the dv on test data set'
+        self.predict_model = self.fit(self.df_x_train, self.df_y_train)
+        
+        self.df_predict = pd.DataFrame()
+        
+        test_dataset =  sm.add_constant(self.df_x_test, prepend=True)
+        
+        self.df_predict['Model'] = self.predict_model.predict(test_dataset)
+        self.df_predict['Actual'] = self.df_y_test
+        
+        return self.df_predict
     
     
-    def removePoints(self, df, model, dv, threshold = .01):
-        curR2adj = model.rsquared_adj
-        newR2adj = 1
-        while newR2adj - curR2adj > threshold:
-            df['Cooks Distance'] = data().influence(model)[0]
-            df['Studentized Residual'] = model.outlier_test()['student_resid']
-            n = len(df)
-            df_new = df.loc[df['Cooks Distance'] <= 4 /n ]
-            df_new = df_new.loc[df['Studentized Residual'] >= -4]
-            df_new = df_new.loc[df['Studentized Residual'] <= 4]
-            
-            df_new = df_new.loc[:, ~df_new.columns.isin(['Cooks Distance', 'Studentized Residual'])]
+    def removePoints(self):
+        'removes outliers and influential points from dataset'
+        self.df['Cooks Distance'] = self.influence(self.reg)[0]
+        self.df['Studentized Residual'] = self.reg.outlier_test()['student_resid']
+        n = len(self.df)
+        self.df_new = self.df.loc[self.df['Cooks Distance'] <= 4 /n ]
+        self.df_new = self.df_new.loc[self.df['Studentized Residual'] >= -4]
+        self.df_new = self.df_new.loc[self.df['Studentized Residual'] <= 4]
+        
+        self.df_new = self.df_new.loc[:, ~self.df_new.columns.isin(['Cooks Distance', 'Studentized Residual'])]
+                
+        #create separate dfs for dv and iv
+        self.df_X = self.df_new.loc[:, ~self.df_new.columns.isin([self.dv])] #features df
+        self.df_Y = self.df_new[self.dv] #dv df
                     
-            #create separate dfs for dv and iv
-            df_X = df_new.loc[:, ~df_new.columns.isin([dv])] #features df
-            df_Y = df_new[dv] #dv df
-                        
-            model = sm.OLS(df_Y,df_X).fit()
+        self.fit(self.df_X,self.df_Y)
+        
+        self.df = self.df_new
             
-            newR2adj, curR2adj = model.rsquared_adj, newR2adj
-            df = df_new
-            
-        return df
+        return self.df
     
     def rename(self, colDict):
+        'renames columns based on dictionary values'
         for key in colDict.keys():
             self.df.rename(columns={key:colDict[key]}, inplace = True)
     
     #removes trailing units in column name
     def renameCol(self):
+        'remove extraneous wording and spaces from column names'
         column_dict = {}
         
         for col in self.df:
@@ -102,30 +128,40 @@ class data():
         self.df.rename(columns=column_dict, inplace = True)
     
     def returnDF(self):
+        'returns data frame'
         return self.df
     
     def removeCol(self, cols):
+        'deletes column from dataframe'
         self.df = self.df.loc[:, ~self.df.columns.isin(cols)]
         
         return self.df
             
-    
     def setDF(self, df):
+        'sets df'
         self.df = df
     
     def setDV(self, dv):
+        'sets dependent variable'
         self.dv = dv
         
     def split(self):
+        'splits dataframe into iv and dv'
         self.df_X = self.df.loc[:, ~self.df.columns.isin([self.dv])]
         self.df_Y = self.df[self.dv]
     
     def student_residual(self, model):
+        'print studentized residulas'
         stud = model.outlier_test()
         print(stud)
+        
+    def train_test(self, seed):
+        'split df into train and test'
+        self.df_x_train, self.df_x_test, self.df_y_train, self.df_y_test = train_test_split(self.df_X, self.df_Y, test_size=0.25, random_state=seed)
     
-    #transform variable
+
     def transform(self, x, transform_type, colName):
+        'transforms dv'
         if transform_type.lower() == 'log':
             self.df[colName] = np.log(x)
         if transform_type.lower() == 'sqrt':
@@ -133,6 +169,7 @@ class data():
     
     #calculate and remove variables based on VIF
     def vif(self, threshold):
+        'remove columns with VIF larger than threshold'
         df = self.df.drop(columns = self.dv)
         drop_col = []
         
