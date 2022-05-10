@@ -14,9 +14,9 @@ import statsmodels.api as sm
 class data():  
     def descriptives(self, columns):
         'produces descriptive statstics'
-        descriptive_df = pd.DataFrame(columns = ['Feature', 'Mean', 'Minimum', 'Maximum', 'Range', 'SD', 'Quant1','Quant3'])
-        print(descriptive_df.shape)
-        i = 0
+        descriptive_df = pd.DataFrame(columns = ['Feature', 'Mean', 'Minimum', 'Maximum', 'Range', 'SD', 'Quant1','Quant3']) #all columns provided in table
+
+        i = 0 #initialize row counter
         for col in columns:
             
             mean = self.df[col].mean()
@@ -25,9 +25,9 @@ class data():
             sd = self.df[col].std()
             q1, q3 = self.df[col].quantile(q=.25, interpolation='midpoint'), self.df[col].quantile(q=.75, interpolation='midpoint')
             
-            descriptive_df.loc[i] = [col, mean, minimum, maximum, Range, sd, q1, q3]
+            descriptive_df.loc[i] = [col, mean, minimum, maximum, Range, sd, q1, q3] #append row to dataframe
             
-            i += 1
+            i += 1 #increase row counter
             
         print(descriptive_df) 
        
